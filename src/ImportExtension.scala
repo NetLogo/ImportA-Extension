@@ -29,7 +29,8 @@ class ImportExtension extends DefaultClassManager {
     override def getSyntax = Syntax.commandSyntax(right = List(Syntax.StringType))
     override def perform(args: Array[Argument], context: Context): Unit = {
       val image = ImageIO.read(new ByteArrayInputStream(asBytes(args(0))))
-      ImportPatchColors.doImport(image, context.workspace.world.asInstanceOf[World], true)
+      val world = context.workspace.world.asInstanceOf[World]
+      PColorsImporter(world, true, image)
     }
   }
 
@@ -37,7 +38,8 @@ class ImportExtension extends DefaultClassManager {
     override def getSyntax = Syntax.commandSyntax(right = List(Syntax.StringType))
     override def perform(args: Array[Argument], context: Context): Unit = {
       val image = ImageIO.read(new ByteArrayInputStream(asBytes(args(0))))
-      ImportPatchColors.doImport(image, context.workspace.world.asInstanceOf[World], false)
+      val world = context.workspace.world.asInstanceOf[World]
+      PColorsImporter(world, false, image)
     }
   }
 
