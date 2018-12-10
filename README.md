@@ -107,7 +107,7 @@ end
 
 ## I noticed that the color values from `import-a:pcolors` are not exactly the same as the values from `import-pcolors` in desktop NetLogo.  Why is that?
 
-While `import-a:pcolors` will give exactly the same results, whether executed in desktop NetLogo or NetLogo Web, it will sometimes give different results than desktop's normal `import-pcolors`.  The reason is that desktop's `import-pcolors` does some things that are both arbitrary and incredibly difficult to reproduce in JavaScript, so the version of the primitive in the desktop NetLogo extension and NetLogo Web extension use code that is simplified and more reproducible.  Across *all* versions and platforms, though, the images should still look incredibly similar when imported.  If they, don't it's a bug, and report it in "Issues" tab above.
+While `import-a:pcolors` will give exactly the same results, whether executed in desktop NetLogo or NetLogo Web, it will sometimes give different results than desktop's normal `import-pcolors`.  The reason is that desktop's `import-pcolors` does some things that are both arbitrary and incredibly difficult to reproduce in JavaScript, so the version of the primitive in the desktop NetLogo extension and NetLogo Web extension use code that is simplified and more reproducible.  Across *all* versions and platforms, though, the images should still look incredibly similar when imported.  If they don't, it's a bug, and please report it in the "Issues" tab above.
 
 ## Building
 
