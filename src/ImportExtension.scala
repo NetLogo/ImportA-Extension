@@ -7,6 +7,7 @@ import javax.imageio.ImageIO
 import org.nlogo.agent.{ ImportPatchColors, World }
 import org.nlogo.api.{ Argument, Command, Context, DefaultClassManager, PrimitiveManager }
 import org.nlogo.core.Syntax
+import org.nlogo.headless.HeadlessWorkspace
 import org.nlogo.window.GUIWorkspace
 
 class ImportExtension extends DefaultClassManager {
@@ -21,7 +22,12 @@ class ImportExtension extends DefaultClassManager {
   private object DrawingPrim extends Command {
     override def getSyntax = Syntax.commandSyntax(right = List(Syntax.StringType))
     override def perform(args: Array[Argument], context: Context): Unit = {
-      context.workspace.asInstanceOf[GUIWorkspace].importDrawing(new ByteArrayInputStream(asBytes(args(0))))
+      val bais = new ByteArrayInputStream(asBytes(args(0)))
+      context.workspace match {
+        case workspace: GUIWorkspace      => workspace.importDrawing(bais)
+        case workspace: HeadlessWorkspace => workspace.importDrawing(bais)
+        case _                            => // No-op
+      }
     }
   }
 
