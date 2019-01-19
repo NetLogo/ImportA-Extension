@@ -21,5 +21,3 @@ netLogoTarget :=
   org.nlogo.build.NetLogoExtension.directoryTarget(baseDirectory.value)
 
 netLogoVersion := "6.0.4-7794b92"
-
-libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
