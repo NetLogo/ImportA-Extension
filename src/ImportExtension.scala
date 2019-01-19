@@ -24,8 +24,8 @@ class ImportExtension extends DefaultClassManager {
     override def perform(args: Array[Argument], context: Context): Unit = {
       val bais = new ByteArrayInputStream(asBytes(args(0)))
       context.workspace match {
-        case workspace: GUIWorkspace      => workspace.importDrawing(bais)
         case workspace: HeadlessWorkspace => workspace.importDrawing(bais)
+        case workspace: GUIWorkspace      => workspace.importDrawing(bais)
         case _                            => // No-op
       }
     }
