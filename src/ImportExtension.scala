@@ -22,10 +22,9 @@ class ImportExtension extends DefaultClassManager {
   private object DrawingPrim extends Command {
     override def getSyntax = Syntax.commandSyntax(right = List(Syntax.StringType))
     override def perform(args: Array[Argument], context: Context): Unit = {
-      val bais = new ByteArrayInputStream(asBytes(args(0)))
       context.workspace match {
-        case workspace: HeadlessWorkspace => workspace.importDrawing(bais)
-        case workspace: GUIWorkspace      => workspace.importDrawing(bais)
+        case workspace: HeadlessWorkspace => workspace.importDrawingBase64(args(0).getString)
+        case workspace: GUIWorkspace      => workspace.importDrawingBase64(args(0).getString)
         case _                            => // No-op
       }
     }
