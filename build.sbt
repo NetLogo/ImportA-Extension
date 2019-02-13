@@ -6,7 +6,7 @@ netLogoClassManager := "org.nlogo.extension.importa.ImportExtension"
 
 netLogoZipSources := false
 
-version := "1.0.1"
+version := "1.0.2"
 
 scalaVersion := "2.12.6"
 
