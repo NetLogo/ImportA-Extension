@@ -20,7 +20,7 @@ object PColorsImporter {
     val width  = image.getWidth
     val pixels = for (y <- 0 until height; x <- 0 until width) yield new Color(image.getRGB(x, y))
 
-    val updates = genUpdates(world, pixels, height, width)
+    val updates = genUpdates(world, pixels, width, height)
 
     val updateColor: (Update) => Unit =
       if (isNetLogoColorspace)
