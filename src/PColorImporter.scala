@@ -47,17 +47,37 @@ object PColorsImporter {
 
   private def genUpdates(world: World, pixels: Seq[Color], imageWidth: Int, imageHeight: Int): Seq[Update] = {
 
-    import world.{ minPxcor, minPycor, worldWidth, worldHeight }
+    import world.{ minPxcor, minPycor, patchSize, worldWidth, worldHeight }
 
-    val xStarts = (0 until worldWidth ).map(x => StrictMath.floor(x * imageWidth  / worldWidth ).toInt)
-    val yStarts = (0 until worldHeight).map(x => StrictMath.floor(x * imageHeight / worldHeight).toInt)
+    def genCoords(patchSize: Double, ratio: Double, worldDim: Int, imageDim: Int): (Int, Int, Map[Int, Int]) = {
 
-    for (xcor <- 0 until worldWidth; ycor <- 0 until worldHeight) yield {
+      val worldPixelDim  = patchSize * worldDim
+      val scaledImageDim = imageDim * ratio
+      val patchOffset    = (worldPixelDim  - scaledImageDim) / patchSize / 2
+      val startPatch     = StrictMath.floor(patchOffset).toInt
+      val endPatch       = worldDim - StrictMath.ceil(patchOffset).toInt
+      val dimRatio       = imageDim / (endPatch - startPatch)
+
+      val startPixels =
+        (startPatch until endPatch).map {
+          patchNum => patchNum -> StrictMath.floor((patchNum - startPatch) * dimRatio).toInt
+        }.toMap
+
+      (startPatch, endPatch, startPixels)
+
+    }
+
+    val ratio = StrictMath.min(patchSize * worldWidth / imageWidth, patchSize * worldHeight / imageHeight)
+
+    val (xStart, xEnd, xStarts) = genCoords(patchSize, ratio, worldWidth , imageWidth )
+    val (yStart, yEnd, yStarts) = genCoords(patchSize, ratio, worldHeight, imageHeight)
+
+    for (xcor <- xStart until xEnd; ycor <- yStart until yEnd) yield {
 
       val minX = xStarts(xcor)
       val minY = yStarts(ycor)
-      val maxX = StrictMath.max(minX + 1, xStarts.applyOrElse(xcor + 1, (_: Int) => imageWidth ))
-      val maxY = StrictMath.max(minY + 1, yStarts.applyOrElse(ycor + 1, (_: Int) => imageHeight))
+      val maxX = StrictMath.max(minX + 1, xStarts.getOrElse(xcor + 1, imageWidth ))
+      val maxY = StrictMath.max(minY + 1, yStarts.getOrElse(ycor + 1, imageHeight))
 
       // This here is essentially the whole reason I'm not using the standard NetLogo
       // code for `import-pcolors`.  Instead, I just use the color of the center pixel
