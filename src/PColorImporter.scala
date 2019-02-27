@@ -18,7 +18,7 @@ object PColorsImporter {
 
     val height = image.getHeight
     val width  = image.getWidth
-    val pixels = for (y <- 0 until height; x <- 0 until width) yield new Color(image.getRGB(x, y))
+    val pixels = for (y <- 0 until height; x <- 0 until width) yield new Color(image.getRGB(x, y), true)
 
     val updates = genUpdates(world, pixels, width, height)
 
@@ -72,28 +72,31 @@ object PColorsImporter {
     val (xStart, xEnd, xStarts) = genCoords(patchSize, ratio, worldWidth , imageWidth )
     val (yStart, yEnd, yStarts) = genCoords(patchSize, ratio, worldHeight, imageHeight)
 
-    for (xcor <- xStart until xEnd; ycor <- yStart until yEnd) yield {
+    val updates =
+      for (xcor <- xStart until xEnd; ycor <- yStart until yEnd) yield {
 
-      val minX = xStarts(xcor)
-      val minY = yStarts(ycor)
-      val maxX = StrictMath.max(minX + 1, xStarts.getOrElse(xcor + 1, imageWidth ))
-      val maxY = StrictMath.max(minY + 1, yStarts.getOrElse(ycor + 1, imageHeight))
+        val minX = xStarts(xcor)
+        val minY = yStarts(ycor)
+        val maxX = StrictMath.max(minX + 1, xStarts.getOrElse(xcor + 1, imageWidth ))
+        val maxY = StrictMath.max(minY + 1, yStarts.getOrElse(ycor + 1, imageHeight))
 
-      // This here is essentially the whole reason I'm not using the standard NetLogo
-      // code for `import-pcolors`.  Instead, I just use the color of the center pixel
-      // of the bitmap section.  Averaging the colors in the section is tempting, but
-      // just tends to lead to lots of grays.  Normal `import-pcolors` does all this
-      // silly jank with scaling the image down, using AWT.  How does ADT decide which
-      // color to use when several pixels are collapsed into one?  Who knows.  I haven't
-      // managed to figure out the logic.  It doesn't seem to be averaging nor picking
-      // the center pixel.  Whatever. --JAB (11/19/18)
-      val x     = StrictMath.floor((minX + maxX) / 2).toInt
-      val y     = StrictMath.floor((minY + maxY) / 2).toInt
-      val pixel = pixels(x + (y * imageWidth))
+        // This here is essentially the whole reason I'm not using the standard NetLogo
+        // code for `import-pcolors`.  Instead, I just use the color of the center pixel
+        // of the bitmap section.  Averaging the colors in the section is tempting, but
+        // just tends to lead to lots of grays.  Normal `import-pcolors` does all this
+        // silly jank with scaling the image down, using AWT.  How does ADT decide which
+        // color to use when several pixels are collapsed into one?  Who knows.  I haven't
+        // managed to figure out the logic.  It doesn't seem to be averaging nor picking
+        // the center pixel.  Whatever. --JAB (11/19/18)
+        val x     = StrictMath.floor((minX + maxX) / 2).toInt
+        val y     = StrictMath.floor((minY + maxY) / 2).toInt
+        val pixel = pixels(x + (y * imageWidth))
 
-      Update(pixel, minPxcor + xcor, minPycor + ((worldHeight - 1) - ycor))
+        Update(pixel, minPxcor + xcor, minPycor + ((worldHeight - 1) - ycor))
 
-    }
+      }
+
+    updates.filter { case Update(p, x, y) => p.getAlpha != 0 }
 
   }
 
