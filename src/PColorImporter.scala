@@ -56,7 +56,7 @@ object PColorsImporter {
       val patchOffset    = (worldPixelDim  - scaledImageDim) / patchSize / 2
       val startPatch     = StrictMath.floor(patchOffset).toInt
       val endPatch       = worldDim - StrictMath.ceil(patchOffset).toInt
-      val dimRatio       = imageDim / (endPatch - startPatch)
+      val dimRatio       = imageDim.toDouble / (endPatch - startPatch)
 
       val startPixels =
         (startPatch until endPatch).map {
