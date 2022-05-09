@@ -51,7 +51,8 @@ class ImportExtension extends DefaultClassManager {
   private object WorldPrim extends Command {
     override def getSyntax = Syntax.commandSyntax(right = List(Syntax.StringType))
     override def perform(args: Array[Argument], context: Context): Unit = {
-      context.workspace.importWorld(new InputStreamReader(new ByteArrayInputStream(args(0).getString.getBytes)))
+      val bais = new ByteArrayInputStream(args(0).getString.getBytes)
+      context.workspace.importWorld(new InputStreamReader(bais))
     }
   }
 
