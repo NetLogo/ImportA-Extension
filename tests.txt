@@ -106,3 +106,13 @@ World
   O> import-a:world world
   count turtles => 20
   count [turtles-here] of patch 0 0 => 20
+
+Errors
+
+  extensions [import-a]
+  O> import-a:pcolors "onepart" => ERROR Extension exception: This primitive only accepts input that is base64-encoded.
+  O> import-a:pcolors "two,parts" => ERROR Extension exception: This primitive only accepts input that is base64-encoded.
+  O> import-a:pcolors "three,different,parts" => ERROR Extension exception: This primitive only accepts input that is base64-encoded.
+  O> import-a:pcolors-rgb "onepart" => ERROR Extension exception: This primitive only accepts input that is base64-encoded.
+  O> import-a:pcolors-rgb "two,parts" => ERROR Extension exception: This primitive only accepts input that is base64-encoded.
+  O> import-a:pcolors-rgb "three,different,parts" => ERROR Extension exception: This primitive only accepts input that is base64-encoded.
