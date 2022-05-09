@@ -1,11 +1,12 @@
 package org.nlogo.extension.importa
 
+import java.awt.image.BufferedImage
 import java.io.{ ByteArrayInputStream, InputStreamReader }
 import java.util.Base64
 import javax.imageio.ImageIO
 
 import org.nlogo.agent.{ ImportPatchColors, World }
-import org.nlogo.api.{ Argument, Command, Context, DefaultClassManager, PrimitiveManager }
+import org.nlogo.api.{ Argument, Command, Context, DefaultClassManager, ExtensionException, PrimitiveManager }
 import org.nlogo.core.Syntax
 import org.nlogo.headless.HeadlessWorkspace
 import org.nlogo.window.GUIWorkspace
@@ -18,6 +19,8 @@ class ImportExtension extends DefaultClassManager {
     manager.addPrimitive("pcolors-rgb", PcolorsRGBPrim)
     manager.addPrimitive("world"      , WorldPrim)
   }
+
+  private val pcMsg = "This primitive only accepts input that is base64-encoded."
 
   private object DrawingPrim extends Command {
     override def getSyntax = Syntax.commandSyntax(right = List(Syntax.StringType))
@@ -33,7 +36,7 @@ class ImportExtension extends DefaultClassManager {
   private object PcolorsPrim extends Command {
     override def getSyntax = Syntax.commandSyntax(right = List(Syntax.StringType))
     override def perform(args: Array[Argument], context: Context): Unit = {
-      val image = ImageIO.read(new ByteArrayInputStream(asBytes(args(0))))
+      val image = asImage(args(0))
       val world = context.workspace.world.asInstanceOf[World]
       PColorsImporter(world, true, image)
     }
@@ -42,7 +45,7 @@ class ImportExtension extends DefaultClassManager {
   private object PcolorsRGBPrim extends Command {
     override def getSyntax = Syntax.commandSyntax(right = List(Syntax.StringType))
     override def perform(args: Array[Argument], context: Context): Unit = {
-      val image = ImageIO.read(new ByteArrayInputStream(asBytes(args(0))))
+      val image = asImage(args(0))
       val world = context.workspace.world.asInstanceOf[World]
       PColorsImporter(world, false, image)
     }
@@ -56,7 +59,25 @@ class ImportExtension extends DefaultClassManager {
     }
   }
 
-  private def asBytes(arg: Argument): Array[Byte] =
-    Base64.getDecoder.decode(arg.getString.split(",")(1))
+  private def asImage(arg: Argument): BufferedImage = {
+    val image = ImageIO.read(new ByteArrayInputStream(asBytes(arg)))
+    if (image != null)
+      image
+    else
+      throw new ExtensionException(pcMsg)
+  }
+
+  private def asBytes(arg: Argument): Array[Byte] = {
+    val arr = arg.getString.split(",")
+    if (arr.length == 2) {
+      try Base64.getDecoder.decode(arr(1))
+      catch {
+        case _: IllegalArgumentException =>
+          throw new ExtensionException(pcMsg)
+      }
+    } else {
+      throw new ExtensionException(pcMsg)
+    }
+  }
 
 }
