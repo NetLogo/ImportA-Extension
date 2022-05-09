@@ -67,7 +67,15 @@ object PColorsImporter {
 
     }
 
-    val ratio = StrictMath.min(patchSize * worldWidth / imageWidth, patchSize * worldHeight / imageHeight)
+    // Sorry, but I'm probably going to Hell for this.
+    // Patch size values with a large number of significant digits could
+    // trigger IEEE floating point chicanery here.  My solution is to pump
+    // the numbers up, to give us more leeway before the IEEE floating point
+    // assassins emerge from the shadows and stab us in the back.
+    // --Jason B. (5/9/22)
+    val xRatio = patchSize * 1e10 * worldWidth  / imageWidth  / 1e10
+    val yRatio = patchSize * 1e10 * worldHeight / imageHeight / 1e10
+    val ratio  = StrictMath.min(xRatio, yRatio)
 
     val (xStart, xEnd, xStarts) = genCoords(patchSize, ratio, worldWidth , imageWidth )
     val (yStart, yEnd, yStarts) = genCoords(patchSize, ratio, worldHeight, imageHeight)
