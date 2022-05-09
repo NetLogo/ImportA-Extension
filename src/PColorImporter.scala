@@ -84,7 +84,7 @@ object PColorsImporter {
         // code for `import-pcolors`.  Instead, I just use the color of the center pixel
         // of the bitmap section.  Averaging the colors in the section is tempting, but
         // just tends to lead to lots of grays.  Normal `import-pcolors` does all this
-        // silly jank with scaling the image down, using AWT.  How does ADT decide which
+        // silly jank with scaling the image down, using AWT.  How does AWT decide which
         // color to use when several pixels are collapsed into one?  Who knows.  I haven't
         // managed to figure out the logic.  It doesn't seem to be averaging nor picking
         // the center pixel.  Whatever. --JAB (11/19/18)
