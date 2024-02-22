@@ -105,6 +105,39 @@ to test-world-url-and-then
 end
 ```
 
+## Drawing Layer Example
+
+A common use of `import-a:drawing` is to setup a background for use during a model run.  On NetLogo desktop this is a simple task using `import-drawing` with a local file.  On NetLogo Web, though, we only have access to the `fetch:url-async` primitive to get our image data.  As such we have a few extra considerations when making models:
+
+- Because the image will be loaded asynchronously from the rest of the model setup, we need a way to wait to actually start the model until the image is displayed.  Fortunately the use of forever buttons, `clear-all`, and the `reset-ticks` primitives make this pretty straightforward.
+- We have to make sure [the Cross-Origin Resource Sharing (CORS) rules](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) of the web server hosting the image allow us to load the image from netlogoweb.org (or wherever the model is running from).  Setting up CORS is different for every web server, but it's a common task so it's usually well-documented.
+
+```netlogo
+extensions [ fetch import-a ]
+
+to setup
+  ; This clears the ticks, so a **go** button will be disabled until they are reset
+  clear-all
+
+  ; The CCL website server is setup to allow https://netlogoweb.org to fetch resources from it (CORS).
+  let image-url "https://ccl.northwestern.edu/netlogo/models/models/Sample%20Models/Biology/Evolution/Bug%20Hunt%20Camouflage.png"
+
+  ; The callback anonymous procedure runs once the data is fetched.  The `setup` procedure
+  ; continues execution while that fetch is executed.
+  fetch:url-async image-url [ data ->
+    import-a:drawing data
+    ; Once the image is loaded, we're ready to play, so now we reset
+    reset-ticks
+  ]
+  ; If we ran the `reset-ticks` here, after the fetch, it would probably execute before the image is loaded.
+end
+
+to go
+  ; Because the **go** button is disabled until ticks are reset, we can be sure the image is loaded
+  ; and we're ready to run the real model logic.
+end
+```
+
 ## I noticed that the color values from `import-a:pcolors` are not exactly the same as the values from `import-pcolors` in desktop NetLogo.  Why is that?
 
 While `import-a:pcolors` will give exactly the same results, whether executed in desktop NetLogo or NetLogo Web, it will sometimes give different results than desktop's normal `import-pcolors`.  The reason is that desktop's `import-pcolors` does some things that are both arbitrary and incredibly difficult to reproduce in JavaScript, so the version of the primitive in the desktop NetLogo extension and NetLogo Web extension use code that is simplified and more reproducible.  Across *all* versions and platforms, though, the images should still look incredibly similar when imported.  If they don't, it's a bug, and please report it in the "Issues" tab above.
