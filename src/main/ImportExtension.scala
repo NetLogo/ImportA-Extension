@@ -68,16 +68,24 @@ class ImportExtension extends DefaultClassManager {
   }
 
   private def asBytes(arg: Argument): Array[Byte] = {
+
     val arr = arg.getString.split(",")
-    if (arr.length == 2) {
-      try Base64.getDecoder.decode(arr(1))
-      catch {
-        case _: IllegalArgumentException =>
-          throw new ExtensionException(pcMsg)
+
+    val base64 =
+      if (arr.length == 1) {
+        arr(0)
+      } else if (arr.length == 2) {
+        arr(1)
+      } else {
+        throw new ExtensionException(pcMsg)
       }
-    } else {
-      throw new ExtensionException(pcMsg)
+
+    try Base64.getDecoder.decode(base64)
+    catch {
+      case _: IllegalArgumentException =>
+        throw new ExtensionException(pcMsg)
     }
+
   }
 
 }
