@@ -10,4 +10,4 @@ scalacOptions          ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings",
 
 netLogoExtName      := "import-a"
 netLogoClassManager := "org.nlogo.extension.importa.ImportExtension"
-netLogoVersion      := "6.4.0"
+netLogoVersion      := "6.3.0"
