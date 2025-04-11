@@ -49,12 +49,12 @@ object PColorsImporter {
 
     import world.{ minPxcor, minPycor, patchSize, worldWidth, worldHeight }
 
-    def genCoords(patchSize: Double, ratio: Double, worldDim: Int, imageDim: Int): (Int, Map[Int, Int]) = {
+    def genCoords(patchSize: Double, ratio: Double, worldDim: Int, imageDim: Int): (Int, Int, Map[Int, Int]) = {
 
       val worldPixelDim  = patchSize * worldDim
       val scaledImageDim = imageDim * ratio
       val patchOffset    = (worldPixelDim  - scaledImageDim) / patchSize / 2
-      val startPatch     = StrictMath.floor(patchOffset).toInt
+      val startPatch     = StrictMath.ceil(patchOffset).toInt
       val endPatch       = worldDim - StrictMath.ceil(patchOffset).toInt
       val dimRatio       = imageDim.toDouble / (endPatch - startPatch)
 
@@ -63,7 +63,7 @@ object PColorsImporter {
           patchNum => patchNum -> StrictMath.floor((patchNum - startPatch) * dimRatio).toInt
         }.toMap
 
-      (endPatch, startPixels)
+      (startPatch, endPatch, startPixels)
 
     }
 
@@ -77,11 +77,11 @@ object PColorsImporter {
     val yRatio = patchSize * 1e10 * worldHeight / imageHeight / 1e10
     val ratio  = StrictMath.min(xRatio, yRatio)
 
-    val (xEnd, xStarts) = genCoords(patchSize, ratio, worldWidth , imageWidth )
-    val (yEnd, yStarts) = genCoords(patchSize, ratio, worldHeight, imageHeight)
+    val (xStart, xEnd, xStarts) = genCoords(patchSize, ratio, worldWidth , imageWidth )
+    val (yStart, yEnd, yStarts) = genCoords(patchSize, ratio, worldHeight, imageHeight)
 
     val updates =
-      for (xcor <- 0 until xEnd; ycor <- 0 until yEnd) yield {
+      for (xcor <- xStart until xEnd; ycor <- yStart until yEnd) yield {
 
         val minX = xStarts(xcor)
         val minY = yStarts(ycor)
