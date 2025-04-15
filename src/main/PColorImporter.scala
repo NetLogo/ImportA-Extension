@@ -53,10 +53,14 @@ object PColorsImporter {
 
       val worldPixelDim  = patchSize * worldDim
       val scaledImageDim = imageDim * ratio
-      val patchOffset    = (worldPixelDim  - scaledImageDim) / patchSize / 2
-      val startPatch     = StrictMath.ceil(patchOffset).toInt
-      val endPatch       = worldDim - StrictMath.ceil(patchOffset).toInt
-      val dimRatio       = imageDim.toDouble / (endPatch - startPatch)
+
+      // Even with Jason's floating point voodoo for the ratios, we can still end up with
+      // a scaled image dimenstion slightly larger than the world dimension.  This is
+      // incorrect, so we just limit it at 0.  -Jeremy B April 2025
+      val patchOffset = StrictMath.max(0, worldPixelDim  - scaledImageDim) / patchSize / 2
+      val startPatch  = StrictMath.floor(patchOffset).toInt
+      val endPatch    = worldDim - StrictMath.ceil(patchOffset).toInt
+      val dimRatio    = imageDim.toDouble / (endPatch - startPatch)
 
       val startPixels =
         (startPatch until endPatch).map {

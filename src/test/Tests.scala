@@ -1,4 +1,4 @@
-package org.nlogo.extensions.importa
+package org.nlogo.extension.importa
 
 import java.io.File
 import org.nlogo.headless.TestLanguage
