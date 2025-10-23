@@ -5,7 +5,7 @@ import java.io.{ ByteArrayInputStream, InputStreamReader }
 import java.util.Base64
 import javax.imageio.ImageIO
 
-import org.nlogo.agent.{ ImportPatchColors, World }
+import org.nlogo.agent.World
 import org.nlogo.api.{ Argument, Command, Context, DefaultClassManager, ExtensionException, PrimitiveManager }
 import org.nlogo.core.Syntax
 import org.nlogo.headless.HeadlessWorkspace
