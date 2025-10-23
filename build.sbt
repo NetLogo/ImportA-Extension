@@ -1,6 +1,6 @@
 enablePlugins(org.nlogo.build.NetLogoExtension)
 
-version    := "1.1.1"
+version    := "1.1.0"
 isSnapshot := true
 
 scalaVersion           := "3.7.0"
